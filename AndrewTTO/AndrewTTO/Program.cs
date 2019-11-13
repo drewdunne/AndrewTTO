@@ -8,5 +8,25 @@ namespace AndrewTTO
         {
             Console.WriteLine("Hello World!");
         }
+
+
+        void Setup()
+        {
+            Gameboard board = new Gameboard();
+            board.Print();
+
+        }
+
+        void Input()
+        {
+
+        }
+
+        void Update()
+        {
+
+        }
+
     }
+
 }
