@@ -6,5 +6,10 @@ namespace AndrewTTO
 {
     class Tile
     {
+        enum Content {empty, X, O}
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }

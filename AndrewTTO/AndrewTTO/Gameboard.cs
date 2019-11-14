@@ -8,12 +8,13 @@ namespace AndrewTTO
     {
         public Gameboard()
         {
+            Tile[,] board = new Tile[3, 3];
 
         }
 
         public override string ToString()
         {
-            return "Name: " + name + " balance: " + balance;
+            return Tile;
         }
 
         public void Print(Gameboard board)
