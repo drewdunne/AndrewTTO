@@ -7,10 +7,11 @@ namespace AndrewTTO
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            Setup();
         }
 
 
-        void Setup()
+        static void Setup()
         {
             Gameboard board = new Gameboard();
             board.Print();
