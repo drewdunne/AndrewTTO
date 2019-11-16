@@ -6,8 +6,17 @@ namespace AndrewTTO
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            // Provide a welcome message
+            Console.WriteLine("Welcome to Tic Tac Toe!" + "\n" + "\n");
+
+            // Print the empty board
             Setup();
+
+
+
+
+            //Pause the game
+            Console.ReadLine();
         }
 
 

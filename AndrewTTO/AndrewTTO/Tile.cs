@@ -4,28 +4,30 @@ using System.Text;
 
 namespace AndrewTTO
 {
+
+    public enum ContentType {empty, X, O };
+
     class Tile
     {
-        public enum ContentType { empty, X, O };
         
         public ContentType contents;
 
         public Tile()
         {
-            contents = ContentType.empty;
+              contents = ContentType.empty;
         }
         public override string ToString()
         {
-            if (contents == ContentType.empty)
+            if (this.contents == ContentType.empty)
             {
                 return "     ";
             }
-            if (contents == ContentType.X)
+            if (this.contents == ContentType.X)
             {
                 return "  X  ";
 
             }
-            if (contents == ContentType.O)
+            if (this.contents == ContentType.O)
             {
                 return "  O  ";
             }
