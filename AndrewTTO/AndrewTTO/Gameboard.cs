@@ -6,20 +6,19 @@ namespace AndrewTTO
 {
     class Gameboard
     {
-        int BOARD_WIDTH = 3;
-        int BOARD_LENGTH = 3;
-        Tile[,] board = new Tile[3, 3];
+        const int BOARD_WIDTH = 3;
+        const int BOARD_LENGTH = 3;
+        public Tile[,] tile = new Tile[BOARD_LENGTH, BOARD_WIDTH];
 
         public Gameboard()
         {
-            board = new Tile[3, 3];
             
             for (int row = 0; row < BOARD_LENGTH; row++)
             {
                 for (int col = 0; col < BOARD_WIDTH; col++)
                 {
-                    board[col, row] = new Tile();
-                    board[col, row].contents = ContentType.empty;
+                    tile[col, row] = new Tile();
+                    tile[col, row].content = MoveType.empty;
                     
                 }
             }
@@ -39,9 +38,9 @@ namespace AndrewTTO
             {
                 for(int col = 0; col < BOARD_WIDTH; col++)
                 {
-                    result += (board[col, row].ToString());
+                    result += (tile[col, row].ToString());
                     
-                    if (col == BOARD_LENGTH-1)
+                    if (col == BOARD_WIDTH-1)
                     {
                         result += "\n";
                     }
