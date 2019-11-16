@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace AndrewTTO
 {
@@ -6,21 +7,23 @@ namespace AndrewTTO
     {
         static void Main(string[] args)
         {
-            // Provide a welcome message
-            Console.WriteLine("Welcome to Tic Tac Toe!" + "\n" + "\n");
+            bool GameOver = false;
+            int turnCount = 0;
+            bool playerTurn = false;
 
-            // Print the empty board
-            Gameboard board = Setup();
-            
-            //Creates a variable to determine which player will go first
-            var firstTurn = new Random();
+            Gameboard board = Setup(ref playerTurn); // Create a gameboard!
 
-            // Returns which player goes first by running 'Next' method within the Random class. Generates a random number between 0 and 1.
-            int PlayerTurn = (firstTurn.Next(1));
 
-            TakeTurn(ref PlayerTurn, ref board);
 
-            board.Print();
+            while (!GameOver)
+            {
+                board.Print();
+                TakeTurn(ref playerTurn, ref board);
+                playerTurn = !playerTurn;
+
+                ++turnCount;
+            }
+
             
 
             //Pause the game
@@ -28,22 +31,94 @@ namespace AndrewTTO
         }
 
 
-        static Gameboard Setup()
+        static Gameboard Setup(ref bool playerTurn)
         {
             // Declares a new Gameboard named 'board' which is made of 9 Tile objects
             var board = new Gameboard();
 
-            // Prints the Gameboard, as well as the valued
-            board.Print();
-           
+            Console.WriteLine("Welcome to Tic Tac Toe!" + "\n" + "\n"); // Provide a welcome message
+            playerTurn = FlipACoin(); // Player guesses heads or tails
+
             return board;
         }
 
-        static void TakeTurn(ref int PlayerTurn, ref Gameboard board)
+        static void TakeTurn(ref bool playerTurn, ref Gameboard board)
         {
-            
-            if (PlayerTurn == 0)
+
+             // Player's Turn
+            if (playerTurn)
             {
+                Console.WriteLine("Your move!");
+                bool isMoveCompleted = false;
+
+                // Execute Player's move
+                do
+                {
+                    string player1_command = Console.ReadLine();
+
+                    // Interpret player's command into a game move.
+                    switch (player1_command)
+                    {
+                        case "1":
+                            if (board.tile[0, 0].content == MoveType.empty)
+                            { board.tile[0, 0].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 1 is occupied, please select another position"); }
+                            break;
+                        case "2":
+                            if (board.tile[1, 0].content == MoveType.empty)
+                            { board.tile[1, 0].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 2 is occupied, please select another position"); }
+                            break;
+                        case "3":
+                            if (board.tile[2, 0].content == MoveType.empty)
+                            { board.tile[2, 0].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 3 is occupied, please select another position"); }
+                            break;
+                        case "4":
+                            if (board.tile[0, 1].content == MoveType.empty)
+                            { board.tile[0, 1].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 4 is occupied, please select another position"); }
+                            break;
+                        case "5":
+                            if (board.tile[1, 1].content == MoveType.empty)
+                            { board.tile[1, 1].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 5 is occupied, please select another position"); }
+                            break;
+                        case "6":
+                            if (board.tile[2, 1].content == MoveType.empty)
+                            { board.tile[2, 1].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 6 is occupied, please select another position"); }
+                            break;
+                        case "7":
+                            if (board.tile[0, 2].content == MoveType.empty)
+                            { board.tile[0, 2].content = MoveType.X; isMoveCompleted = true;  }
+                            else { Console.WriteLine("Position 7 is occupied, please select another position"); }
+                            break;
+                        case "8":
+                            if (board.tile[1, 2].content == MoveType.empty)
+                            { board.tile[1, 2].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 8 is occupied, please select another position"); }
+                            break;
+                        case "9":
+                            if (board.tile[2, 2].content == MoveType.empty)
+                            { board.tile[2, 2].content = MoveType.X; isMoveCompleted = true; }
+                            else { Console.WriteLine("Position 9 is occupied, please select another position"); }
+                            break;
+                        default:
+                            Console.WriteLine("Invalid Command");
+                            break;
+                    }
+                    
+                } while (isMoveCompleted != true);
+
+                
+             }
+
+            // AI's Turn
+            else if (!playerTurn)
+            {
+                Console.WriteLine("It's the AI's turn. Thinking...");
+                Thread.Sleep(2000);
                 int tile_x;
                 int tile_y;
                 do
@@ -59,14 +134,7 @@ namespace AndrewTTO
                 board.tile[tile_x, tile_y].content = MoveType.O;
             }
 
-            else if (PlayerTurn == 1)
-            {
-                Console.WriteLine("Your move!");
-                Console.ReadLine();
-
-                // TASK: Need to interpret and convert readline into an actual move.
-            }
-
+            // Error Catch
             else
             {
                 Console.WriteLine("ERROR: Current Player Turn is an invalid value. Please Contact Customer Support.");
@@ -77,6 +145,42 @@ namespace AndrewTTO
         void Update()
         {
 
+        }
+
+        static bool FlipACoin()
+        {
+            Console.WriteLine("Call it in the air... (h)eads or (t)ails?");
+            string playerGuess = Console.ReadLine().ToLower();
+            bool wasPlayerCorrect;
+            var coinFlip = new Random();
+            bool coinLandsHeads = coinFlip.Next(2) == 0 ? true : false;
+            string coinFlipResultMessage = "";
+
+            do
+            {
+
+                if (playerGuess == "heads" || playerGuess == "h")
+                {
+                    coinFlipResultMessage = coinLandsHeads ? "It's heads! You go first." : "It's tails, you go second :(";
+                    Console.WriteLine(coinFlipResultMessage);
+                    return coinLandsHeads ? true : false;
+                }
+                if (playerGuess == "tails" || playerGuess == "t")
+                {
+
+                    coinFlipResultMessage = coinLandsHeads ? "It's heads, you go second (sorry!)" : "It's tails! Great guess, you're first.";
+                    Console.WriteLine(coinFlipResultMessage);
+                    return coinLandsHeads ? false : true;
+                }
+                else
+                {
+                    Console.WriteLine("That is not a valid guess, try again!");
+                }
+            } while (coinFlipResultMessage == "");
+
+            Console.WriteLine("A Critical Error has Occured in Method FlipACoin(). Please make your way to the nearest fire escape in an orderly fashion.");
+
+            return false;
         }
 
     }
