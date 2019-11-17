@@ -3,6 +3,8 @@ using System.Threading;
 
 namespace AndrewTTO
 {
+    enum currentTurn { player1, player2 };
+
     class Program
     {
         static void Main(string[] args)
@@ -19,8 +21,8 @@ namespace AndrewTTO
             {
                 board.Print();
                 TakeTurn(ref playerTurn, ref board);
+                GameOver = EvaluateGameOver(playerTurn, board);
                 playerTurn = !playerTurn;
-
                 ++turnCount;
             }
 
@@ -54,54 +56,54 @@ namespace AndrewTTO
                 // Execute Player's move
                 do
                 {
-                    string player1_command = Console.ReadLine();
+                    string issuedCommand = Console.ReadLine();
 
                     // Interpret player's command into a game move.
-                    switch (player1_command)
+                    switch (issuedCommand)
                     {
                         case "1":
-                            if (board.tile[0, 0].content == MoveType.empty)
-                            { board.tile[0, 0].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[0, 0].content == Symbol.empty)
+                            { board.tile[0, 0].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 1 is occupied, please select another position"); }
                             break;
                         case "2":
-                            if (board.tile[1, 0].content == MoveType.empty)
-                            { board.tile[1, 0].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[1, 0].content == Symbol.empty)
+                            { board.tile[1, 0].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 2 is occupied, please select another position"); }
                             break;
                         case "3":
-                            if (board.tile[2, 0].content == MoveType.empty)
-                            { board.tile[2, 0].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[2, 0].content == Symbol.empty)
+                            { board.tile[2, 0].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 3 is occupied, please select another position"); }
                             break;
                         case "4":
-                            if (board.tile[0, 1].content == MoveType.empty)
-                            { board.tile[0, 1].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[0, 1].content == Symbol.empty)
+                            { board.tile[0, 1].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 4 is occupied, please select another position"); }
                             break;
                         case "5":
-                            if (board.tile[1, 1].content == MoveType.empty)
-                            { board.tile[1, 1].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[1, 1].content == Symbol.empty)
+                            { board.tile[1, 1].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 5 is occupied, please select another position"); }
                             break;
                         case "6":
-                            if (board.tile[2, 1].content == MoveType.empty)
-                            { board.tile[2, 1].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[2, 1].content == Symbol.empty)
+                            { board.tile[2, 1].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 6 is occupied, please select another position"); }
                             break;
                         case "7":
-                            if (board.tile[0, 2].content == MoveType.empty)
-                            { board.tile[0, 2].content = MoveType.X; isMoveCompleted = true;  }
+                            if (board.tile[0, 2].content == Symbol.empty)
+                            { board.tile[0, 2].content = Symbol.X; isMoveCompleted = true;  }
                             else { Console.WriteLine("Position 7 is occupied, please select another position"); }
                             break;
                         case "8":
-                            if (board.tile[1, 2].content == MoveType.empty)
-                            { board.tile[1, 2].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[1, 2].content == Symbol.empty)
+                            { board.tile[1, 2].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 8 is occupied, please select another position"); }
                             break;
                         case "9":
-                            if (board.tile[2, 2].content == MoveType.empty)
-                            { board.tile[2, 2].content = MoveType.X; isMoveCompleted = true; }
+                            if (board.tile[2, 2].content == Symbol.empty)
+                            { board.tile[2, 2].content = Symbol.X; isMoveCompleted = true; }
                             else { Console.WriteLine("Position 9 is occupied, please select another position"); }
                             break;
                         default:
@@ -129,9 +131,9 @@ namespace AndrewTTO
                     tile_y = randomRnd_y.Next(2);
 
 
-                } while (board.tile[tile_x, tile_y].content != MoveType.empty);
+                } while (board.tile[tile_x, tile_y].content != Symbol.empty);
 
-                board.tile[tile_x, tile_y].content = MoveType.O;
+                board.tile[tile_x, tile_y].content = Symbol.O;
             }
 
             // Error Catch
@@ -181,6 +183,17 @@ namespace AndrewTTO
             Console.WriteLine("A Critical Error has Occured in Method FlipACoin(). Please make your way to the nearest fire escape in an orderly fashion.");
 
             return false;
+        }
+
+        static bool EvaluateGameOver(playerTurn, Gameboard board)
+        {
+            bool isGameOver;
+
+            // Evaluate Horizontal Victories
+            for (int row = 0; row < Gameboard.BOARD_LENGTH; ++row)
+            {
+                if board.tile[row,]
+            }
         }
 
     }

@@ -5,29 +5,29 @@ using System.Text;
 namespace AndrewTTO
 {
 
-    public enum MoveType {empty, X, O };
+    public enum Symbol {empty, X, O };
 
     class Tile
     {
         
-        public MoveType content;
+        public Symbol content;
 
         public Tile()
         {
-              content = MoveType.empty;
+              content = Symbol.empty;
         }
         public override string ToString()
         {
-            if (this.content == MoveType.empty)
+            if (this.content == Symbol.empty)
            {
                 return "     ";
             }
-            if (this.content == MoveType.X)
+            if (this.content == Symbol.X)
             {
                 return "  X  ";
 
             }
-            if (this.content == MoveType.O)
+            if (this.content == Symbol.O)
             {
                 return "  O  ";
             }

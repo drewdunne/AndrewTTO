@@ -6,8 +6,8 @@ namespace AndrewTTO
 {
     class Gameboard
     {
-        const int BOARD_WIDTH = 3;
-        const int BOARD_LENGTH = 3;
+        public const int BOARD_WIDTH = 3;
+        public const int BOARD_LENGTH = 3;
         public Tile[,] tile = new Tile[BOARD_LENGTH, BOARD_WIDTH];
 
         public Gameboard()
@@ -18,7 +18,7 @@ namespace AndrewTTO
                 for (int col = 0; col < BOARD_WIDTH; col++)
                 {
                     tile[col, row] = new Tile();
-                    tile[col, row].content = MoveType.empty;
+                    tile[col, row].content = Symbol.empty;
                     
                 }
             }
