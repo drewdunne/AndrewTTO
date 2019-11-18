@@ -7,16 +7,40 @@ namespace AndrewTTO
 
     class Player
     {
-        enum Type { human, AI };
+        public enum Type { human, AI };
 
         private Symbol playersSymbol { get; set; }
+        private Type playerType { get; set; }
         public Symbol PlayersSymbol { get; set; }
+        public Type PlayerType { get; set; }
+
+        public string name { get; set; }
+        public bool turnActive { get; set; }
 
 
-        public Player(Symbol assignedSymbol)
+        public Player()
+        {          
+        }
+
+        public void AssignSymbol(Symbol assignedSymbol)
         {
-            assignedSymbol = PlayersSymbol;
-            playersSymbol = PlayersSymbol;
+            PlayersSymbol = assignedSymbol;
+        }
+
+        public void AssignType(Type assignedType)
+        {
+            PlayerType = assignedType;
+        }
+
+        public void AssignName()
+        {
+            Console.WriteLine("Please Input your name!");
+            name = Console.ReadLine();
+        }
+
+        public void SetTurnActiveStatus(bool status)
+        {
+            turnActive = status;
         }
     }
 }

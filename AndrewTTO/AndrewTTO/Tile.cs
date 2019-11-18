@@ -9,6 +9,9 @@ namespace AndrewTTO
 
     class Tile
     {
+        public int x_cord;
+        public int y_cord;
+        public int ID;
         
         public Symbol content;
 

@@ -3,124 +3,65 @@ using System.Threading;
 
 namespace AndrewTTO
 {
-    enum currentTurn { player1, player2 };
+    enum CurrentTurn { player1, player2 };
+    enum CoinSide { heads, tails, error};
 
     class Program
     {
         static void Main(string[] args)
         {
+
+            var player1 = new Player();
+            var player2 = new Player();
             bool GameOver = false;
+
             int turnCount = 0;
-            bool playerTurn = false;
 
-            Gameboard board = Setup(ref playerTurn); // Create a gameboard!
+            Gameboard board = Setup(ref player1, ref player2); // Create a gameboard!
+            Player activePlayer = CoinFlipContest(player1, player2); // Who will go first?
 
-
-
-            while (!GameOver)
+            do
             {
-                board.Print();
-                TakeTurn(ref playerTurn, ref board);
-                GameOver = EvaluateGameOver(playerTurn, board);
-                playerTurn = !playerTurn;
+                PrintBoard(board);
+                TakeTurn(activePlayer, ref board);
+                SwapActivePlayer(ref activePlayer, player1, player2);
                 ++turnCount;
-            }
+            } while (!GameOver);
 
-            
+
 
             //Pause the game
             Console.ReadLine();
         }
 
 
-        static Gameboard Setup(ref bool playerTurn)
+        static Gameboard Setup(ref Player player1, ref Player player2)
         {
-            // Declares a new Gameboard named 'board' which is made of 9 Tile objects
+            Console.WriteLine("Welcome to Tic Tac Toe!" + "\n" + "\n");
+
             var board = new Gameboard();
 
-            Console.WriteLine("Welcome to Tic Tac Toe!" + "\n" + "\n"); // Provide a welcome message
-            playerTurn = FlipACoin(); // Player guesses heads or tails
+            AssignPlayerTypes(ref player1, ref player2);
+            AssignPlayerSymbolsAndTurn(ref player1, ref player2);
 
             return board;
         }
 
-        static void TakeTurn(ref bool playerTurn, ref Gameboard board)
+        static void TakeTurn(Player activePlayer, ref Gameboard board)
         {
 
-             // Player's Turn
-            if (playerTurn)
+            // Player's Turn
+            if (activePlayer.PlayerType == Player.Type.human)
             {
-                Console.WriteLine("Your move!");
-                bool isMoveCompleted = false;
-
-                // Execute Player's move
-                do
-                {
-                    string issuedCommand = Console.ReadLine();
-
-                    // Interpret player's command into a game move.
-                    switch (issuedCommand)
-                    {
-                        case "1":
-                            if (board.tile[0, 0].content == Symbol.empty)
-                            { board.tile[0, 0].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 1 is occupied, please select another position"); }
-                            break;
-                        case "2":
-                            if (board.tile[1, 0].content == Symbol.empty)
-                            { board.tile[1, 0].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 2 is occupied, please select another position"); }
-                            break;
-                        case "3":
-                            if (board.tile[2, 0].content == Symbol.empty)
-                            { board.tile[2, 0].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 3 is occupied, please select another position"); }
-                            break;
-                        case "4":
-                            if (board.tile[0, 1].content == Symbol.empty)
-                            { board.tile[0, 1].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 4 is occupied, please select another position"); }
-                            break;
-                        case "5":
-                            if (board.tile[1, 1].content == Symbol.empty)
-                            { board.tile[1, 1].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 5 is occupied, please select another position"); }
-                            break;
-                        case "6":
-                            if (board.tile[2, 1].content == Symbol.empty)
-                            { board.tile[2, 1].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 6 is occupied, please select another position"); }
-                            break;
-                        case "7":
-                            if (board.tile[0, 2].content == Symbol.empty)
-                            { board.tile[0, 2].content = Symbol.X; isMoveCompleted = true;  }
-                            else { Console.WriteLine("Position 7 is occupied, please select another position"); }
-                            break;
-                        case "8":
-                            if (board.tile[1, 2].content == Symbol.empty)
-                            { board.tile[1, 2].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 8 is occupied, please select another position"); }
-                            break;
-                        case "9":
-                            if (board.tile[2, 2].content == Symbol.empty)
-                            { board.tile[2, 2].content = Symbol.X; isMoveCompleted = true; }
-                            else { Console.WriteLine("Position 9 is occupied, please select another position"); }
-                            break;
-                        default:
-                            Console.WriteLine("Invalid Command");
-                            break;
-                    }
-                    
-                } while (isMoveCompleted != true);
-
-                
-             }
+                Console.WriteLine($"Your move {activePlayer.name}!");
+                ExecuteHumanTurn(activePlayer, ref board);
+            }
 
             // AI's Turn
-            else if (!playerTurn)
+            else if (activePlayer.PlayerType == Player.Type.AI)
             {
-                Console.WriteLine("It's the AI's turn. Thinking...");
-                Thread.Sleep(2000);
+                DisplayAIThinkingMessage(board);
+
                 int tile_x;
                 int tile_y;
                 do
@@ -149,53 +90,211 @@ namespace AndrewTTO
 
         }
 
-        static bool FlipACoin()
+        static void PrintBoard(Gameboard boardToPrint)
         {
-            Console.WriteLine("Call it in the air... (h)eads or (t)ails?");
-            string playerGuess = Console.ReadLine().ToLower();
-            bool wasPlayerCorrect;
-            var coinFlip = new Random();
-            bool coinLandsHeads = coinFlip.Next(2) == 0 ? true : false;
-            string coinFlipResultMessage = "";
+            boardToPrint.Print();
+        }
+
+        static void SwapActivePlayer(ref Player activePlayer, Player player1, Player player2)
+        {
+            activePlayer = (activePlayer == player1) ? player2 : player1;
+            activePlayer = (activePlayer == player2) ? player1 : player2;
+        }
+        static void ExecuteHumanTurn(Player activePlayer, ref Gameboard board)
+        {
+            bool isMoveCompleted = false;
 
             do
             {
+                int move = Convert.ToInt32(Console.ReadLine());
 
+                int x_coord = GetXCoord(move);
+                int y_coord = GetYCoord(move);
+
+                if (board.tile[x_coord, y_coord].content == Symbol.empty)
+                {
+                    isMoveCompleted = true;
+                    board.tile[x_coord, y_coord].content = activePlayer.PlayersSymbol;
+                    Console.WriteLine($"You Mark an {activePlayer.PlayersSymbol.ToString()} down on position {move.ToString()}.");
+                }
+                else if (board.tile[x_coord, y_coord].content == Symbol.X || board.tile[x_coord, y_coord].content == Symbol.O)
+                {
+                    Console.WriteLine($"Position {move.ToString()} is occupied. Please select another tile. Type '/help' to see a helpful diagram (NOT YET AVAILABLE)");
+                }
+                else if (move < 1 || move > 9)
+                {
+                    Console.WriteLine($"The number {move} is not a valid entry. Please select a number 1-9 or type '/help' to see a helpful diagram.");
+                }
+            } while (isMoveCompleted == false);
+        }
+
+        static void DisplayAIThinkingMessage(Gameboard board)
+        {
+            int emptyTileCount = 0;
+
+            var randomizer = new Random();
+            int randomThinkTime = 25 * randomizer.Next(20);
+            emptyTileCount = CountEmptyTiles(board);
+            int totalThinkTime = randomThinkTime * emptyTileCount;
+
+            Console.WriteLine($"It is the AI's Turn.");
+            Thread.Sleep(500);
+
+            if (totalThinkTime < 1200)
+            {
+                Thread.Sleep(totalThinkTime);
+            }
+            else
+            {
+                Console.WriteLine("The AI is thinking...");
+                Thread.Sleep(totalThinkTime);
+            }
+        }
+
+        static int GetXCoord(int Move)
+        {
+            return ((Move - 1) % 3);
+        }
+
+        static int GetYCoord(int Move)
+        {
+            return ((Move - 1) / 3);
+        }
+
+        static int CountEmptyTiles(Gameboard board)
+        {
+            int count = 0;
+
+            for (int row = 0; row < Gameboard.BOARD_LENGTH; row++)
+            {
+                for (int col = 0; col < Gameboard.BOARD_WIDTH; col++)
+                {
+                    count = board.tile[col, row].content == Symbol.empty ? count++ : count;
+                }
+
+            }
+
+            return count;
+        }
+        static Player CoinFlipContest(Player player1, Player player2)
+        {
+
+            CoinSide playerGuess = coinFlipPrompt();
+            CoinSide coinFlipResult = FlipACoin();
+
+            if (playerGuess == coinFlipResult)
+            {
+                coinFlipResultMessage(victory: true, coinFlipResult);
+                return player1;
+            }
+
+            else
+            {
+                coinFlipResultMessage(victory: false, coinFlipResult);
+                return player2;
+            }
+
+        }
+
+        static CoinSide coinFlipPrompt()
+        {
+
+            Console.WriteLine("Call it in the air... (h)eads or (t)ails?");
+            bool validInput = false;
+
+            do
+            {
+                string playerGuess = Console.ReadLine().ToLower();
                 if (playerGuess == "heads" || playerGuess == "h")
                 {
-                    coinFlipResultMessage = coinLandsHeads ? "It's heads! You go first." : "It's tails, you go second :(";
-                    Console.WriteLine(coinFlipResultMessage);
-                    return coinLandsHeads ? true : false;
+                    return CoinSide.heads;
                 }
-                if (playerGuess == "tails" || playerGuess == "t")
+                else if (playerGuess == "tails" || playerGuess == "t")
                 {
-
-                    coinFlipResultMessage = coinLandsHeads ? "It's heads, you go second (sorry!)" : "It's tails! Great guess, you're first.";
-                    Console.WriteLine(coinFlipResultMessage);
-                    return coinLandsHeads ? false : true;
+                    return CoinSide.tails;
                 }
                 else
                 {
                     Console.WriteLine("That is not a valid guess, try again!");
                 }
-            } while (coinFlipResultMessage == "");
+            } while (validInput == false);
 
-            Console.WriteLine("A Critical Error has Occured in Method FlipACoin(). Please make your way to the nearest fire escape in an orderly fashion.");
-
-            return false;
+            return CoinSide.error;
         }
 
-        static bool EvaluateGameOver(playerTurn, Gameboard board)
+        static CoinSide FlipACoin()
         {
-            bool isGameOver;
+            var randomNumber = new Random();
+            CoinSide result = randomNumber.Next(2) == 0 ? CoinSide.heads : CoinSide.tails;
+            return result;
+        }
 
-            // Evaluate Horizontal Victories
-            for (int row = 0; row < Gameboard.BOARD_LENGTH; ++row)
+        static void coinFlipResultMessage(bool victory, CoinSide result)
+        {
+
+            string messageToPrint;
+
+            if (victory)
             {
-                if board.tile[row,]
+                messageToPrint = (result == CoinSide.heads) ? "It's heads! You go first." : "It's tails! Great guess, you're first.";
+            }
+            else
+            {
+                messageToPrint = (result == CoinSide.tails) ? "It's tails, you go second :(" : "It's heads, you go second (sorry!)";
+                messageToPrint = (result == CoinSide.error) ? "There was an error with the Coin Flip" : messageToPrint; // if result == CoinSide.error, an error will print. Otherwise, continue as usual.
+            }
+
+        }
+
+        static void AssignPlayerTypes(ref Player player1, ref Player player2)
+        {
+            player1.AssignType(Player.Type.human);
+            player2.AssignType(Player.Type.AI);
+            AssignPlayerNames(ref player1, ref player2);
+        }
+
+        static void AssignPlayerNames(ref Player player1, ref Player player2)
+        {
+            if (player1.PlayerType == Player.Type.human)
+            {
+                Console.WriteLine("Please Input your name, Player 1");
+                player1.AssignName();
+                Console.WriteLine($"Welcome to the Game {player1.name}!");
+                Thread.Sleep(1000);
+            }
+            if (player2.PlayerType == Player.Type.human)
+            {
+                Console.WriteLine("Please Input your name, Player 2");
+                player2.AssignName();
+            }
+            else if (player2.PlayerType == Player.Type.AI)
+            {
+                Console.WriteLine("Player 2 will be playing as an AI");
+                Thread.Sleep(1000);
+            }
+
+        }
+
+        static void AssignPlayerSymbolsAndTurn(ref Player player1, ref Player player2)
+        {
+            Player winningPlayer;
+            winningPlayer = CoinFlipContest(player1, player2);
+
+            if (player1 == winningPlayer)
+            {
+                player1.AssignSymbol(Symbol.X);
+                player2.AssignSymbol(Symbol.O);
+                player1.SetTurnActiveStatus(true);
+                player2.SetTurnActiveStatus(false);
+            }
+            else if (player2 == winningPlayer)
+            {
+                player1.AssignSymbol(Symbol.O);
+                player2.AssignSymbol(Symbol.X);
+                player1.SetTurnActiveStatus(false);
+                player2.SetTurnActiveStatus(true);
             }
         }
 
     }
-
 }

@@ -19,6 +19,9 @@ namespace AndrewTTO
                 {
                     tile[col, row] = new Tile();
                     tile[col, row].content = Symbol.empty;
+                    tile[col, row].x_cord = col;
+                    tile[col, row].y_cord = row;
+                    tile[col, row].ID = (row * 3) + (col + 1); // Grid ID starting at 1 and going up to 9.
                     
                 }
             }
@@ -52,7 +55,7 @@ namespace AndrewTTO
 
                 if (row != BOARD_LENGTH - 1)
                 {
-                    result += "------------------" + "\n";
+                    result += "_____________" + "\n";
                 }
 
             }
