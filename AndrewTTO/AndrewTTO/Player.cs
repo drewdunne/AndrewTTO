@@ -40,9 +40,9 @@ namespace AndrewTTO
             PlayerType = assignedType;
         }
 
-        public void AssignName()
+        public void AssignName(string prompt)
         {
-            name = Console.ReadLine();
+            name = Program.GetPlayerInput(prompt);
         }
 
         public void SetTurnActiveStatus(bool status)

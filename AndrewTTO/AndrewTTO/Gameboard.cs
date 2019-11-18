@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Text;
 
@@ -37,6 +38,7 @@ namespace AndrewTTO
         {
             string result = "";
 
+
             for(int row = 0; row < BOARD_LENGTH; row++)
             {
                 result += " \n     |     |     \n";
@@ -67,16 +69,18 @@ namespace AndrewTTO
 
         }
 
-        public string PrintHelpKey()
+        static public string PrintHelpKey()
         {
             string result = "";
+            int tileID = 0;
 
             for (int row = 0; row < BOARD_LENGTH; row++)
             {
                 result += " \n     |     |     \n";
                 for (int col = 0; col < BOARD_WIDTH; col++)
                 {
-                    result += $"  {tile[col, row].ID}  ";
+                    tileID = (col + (row*3) + 1);
+                    result += $"  {tileID}  ";
 
                     if (col != BOARD_WIDTH - 1)
                     {
@@ -96,7 +100,15 @@ namespace AndrewTTO
             }
 
             Console.WriteLine(result);
-
+            Console.WriteLine("Above is a helpful key on how to choose your squares! Type /help to view this at any time. \n \n");
+            Console.Write("Press any key to continue");
+            Thread.Sleep(500);
+            Console.Write(".");
+            Thread.Sleep(500);
+            Console.Write(".");
+            Thread.Sleep(500);
+            Console.Write(".");
+            Console.ReadKey();
             return result;
 
         }

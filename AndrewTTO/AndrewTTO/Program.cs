@@ -14,6 +14,7 @@ namespace AndrewTTO
             var player1 = new Player();
             var player2 = new Player();
             var activePlayer = new Player();
+            var board = new Gameboard();
             bool GameOver;
             bool playAgain;
             int turnCount = 0;
@@ -22,64 +23,45 @@ namespace AndrewTTO
             {
                 GameOver = false;
                 turnCount = 0;
-                Gameboard board = Setup(ref player1, ref player2); // Create a gameboard!       
+                board = Setup(ref board, ref player1, ref player2); // Create a gameboard!       
                 activePlayer = SetActivePlayer(ref activePlayer, player1, player2);
 
                 do
                 {
                     Console.Clear();
-                    PrintBoard(board);
+                    board.Print();
                     TakeTurn(activePlayer, ref board);
                     GameOver = CheckForVictory(ref activePlayer, board);
                     SwapActivePlayer(ref activePlayer, ref player1, ref player2);
                     ++turnCount;
                 } while (!GameOver && turnCount < 9);
 
-                Console.WriteLine("The Final Result: \n");
+                Console.WriteLine("\n*** Final Result ***");
 
-                PrintBoard(board);
+                board.Print();
 
                 OutputGameResult(player1, player2, turnCount);
                 playAgain = PlayAgainOffer();
 
             } while (playAgain);
 
-            //Pause the game
-            Console.ReadLine();
         }
 
 
-        static Gameboard Setup(ref Player player1, ref Player player2)
+        static Gameboard Setup(ref Gameboard board, ref Player player1, ref Player player2)
         {
             Console.WriteLine("Welcome to Tic Tac Toe!" + "\n");
 
-            var board = new Gameboard();
-            board.WipeBoard();
-
-            if (player1.score > 0 || player2.score > 0)
+            if (player1.score == 0 && player2.score == 0)
             {
-
-                Console.WriteLine("*********************************************************************** \n");
-
-                Console.WriteLine($"Player 1 has {player1.score} victories, and Player 2 has {player2.score} victories. \n");
-
-                Console.WriteLine("***********************************************************************");
+                Thread.Sleep(1000);
+                Gameboard.PrintHelpKey(); 
             }
 
             else
             {
-                Thread.Sleep(1000);
-                board.PrintHelpKey();
-                Console.WriteLine("Above is a helpful key on how to choose your squares! Review this carefully as it will not be shown again!! \n \n");
-
-                Console.Write("Press any key to continue");
-                Thread.Sleep(500);
-                Console.Write(".");
-                Thread.Sleep(500);
-                Console.Write(".");
-                Thread.Sleep(500);
-                Console.Write(".");
-                Console.ReadKey();
+                PrintScoreboard(player1, player2);
+                board.WipeBoard();
             }
 
             player1.UpdatePlayerVictoryStatus(false);
@@ -91,24 +73,19 @@ namespace AndrewTTO
             return board;
         }
 
-        static void PrintBoard(Gameboard boardToPrint)
-        {
-            boardToPrint.Print();
-        }
-
         static void OutputGameResult(Player player1, Player player2, int turnCount)
         {
             if (player1.victoryStatus)
             {
-                Console.WriteLine("\n You beat an AI that could've been programmed by a nine year old. Feel good about yourself?");
+                Console.WriteLine("\nYou beat an AI that could've been programmed by a nine year old. Feel good about yourself?\n");
             }
             else if (player2.victoryStatus)
             {
-                Console.WriteLine("\n The AI wins. To make matters feel worse, it literally chose it's squares at random. How brain-damaged are you?");
+                Console.WriteLine("\nThe AI wins. To make matters feel worse, it literally chose its squares at random. How brain-damaged are you?\n");
             }
             else
             {
-                Console.WriteLine("\n The Game Ends in a Tie. A monkey could do better to be honest. -_^");
+                Console.WriteLine("\nThe Game Ends in a Tie. A monkey could do better to be honest. -_^\n");
             }
         }
 
@@ -321,8 +298,8 @@ namespace AndrewTTO
             // Player's Turn
             if (activePlayer.PlayerType == Player.Type.human)
             {
-                Console.WriteLine($"Your move {activePlayer.name}!");
-                ExecuteHumanTurn(activePlayer, ref board);
+                string prompt = $"Your move {activePlayer.name}!";
+                ExecuteHumanTurn(activePlayer, ref board, prompt);
             }
             else if (activePlayer.PlayerType == Player.Type.AI)
             {
@@ -332,7 +309,7 @@ namespace AndrewTTO
 
         }
 
-        static void ExecuteHumanTurn(Player activePlayer, ref Gameboard board)
+        static void ExecuteHumanTurn(Player activePlayer, ref Gameboard board, string prompt)
         {
             bool isMoveCompleted = false;
 
@@ -342,7 +319,7 @@ namespace AndrewTTO
                 do
 
                 {
-                    move = ParseInput();
+                    move = ParseInput(prompt);
                 } while (move < 0);
 
 
@@ -356,7 +333,7 @@ namespace AndrewTTO
                 }   
                 else if (board.tile[x_coord, y_coord].content == Symbol.X || board.tile[x_coord, y_coord].content == Symbol.O)
                 {
-                    Console.WriteLine($"Position {move.ToString()} is occupied. Please select another tile. Type '/help' to see a helpful diagram (NOT YET AVAILABLE)");
+                    Console.WriteLine($"Position {move.ToString()} is occupied. Please select another tile. Type '/help' to see a helpful diagram.");
                 }
                 else if (board.tile[x_coord, y_coord].content == Symbol.empty)
                 {
@@ -388,7 +365,7 @@ namespace AndrewTTO
 
             board.tile[tile_x, tile_y].content = activePlayer.PlayersSymbol;
             Console.Clear();
-            PrintBoard(board);
+            board.Print();
             Console.WriteLine($"The AI opts to take position {GetTileID(tile_x, tile_y)} for its turn.");
             activePlayer.SetLastPlay(tile_x, tile_y);
             Thread.Sleep(2000);
@@ -462,7 +439,7 @@ namespace AndrewTTO
             if (playerGuess == coinFlipResult)
             {
                 Thread.Sleep(750);
-                Console.Write("\n The coin flips and then rattles onto the table.");
+                Console.Write("\nThe coin flips and then rattles onto the table.");
                 Thread.Sleep(350);
                 Console.Write(".");
                 Thread.Sleep(450);
@@ -477,7 +454,7 @@ namespace AndrewTTO
             else
             {
                 Thread.Sleep(750);
-                Console.Write("\n The coin flips awkwardly and then rattles onto the table.");
+                Console.Write("\nThe coin flips awkwardly and then rattles onto the table.");
                 Thread.Sleep(350);
                 Console.Write("."); 
                 Thread.Sleep(450);
@@ -495,12 +472,12 @@ namespace AndrewTTO
         static CoinSide coinFlipPrompt()
         {
 
-            Console.WriteLine("\n Call it in the air... (h)eads or (t)ails?");
+            string prompt = "\nCall it in the air... (h)eads or (t)ails?";
             bool validInput = false;
 
             do
             {
-                string playerGuess = Console.ReadLine().ToLower();
+                string playerGuess = GetPlayerInput(prompt).ToLower();
                 if (playerGuess == "heads" || playerGuess == "h")
                 {
                     return CoinSide.heads;
@@ -533,15 +510,16 @@ namespace AndrewTTO
 
             if (victory)
             {
-                messageToPrint = (result == CoinSide.heads) ? "\n It's heads! You go first. \n" : "\n It's tails! Great guess, you're first! \n";
+                messageToPrint = (result == CoinSide.heads) ? "\n    It's heads! You go first." : "\n    It's tails! Great guess, you're first!";
             }
             else
             {
-                messageToPrint = (result == CoinSide.tails) ? "\n It's tails, you go second :( \n" : "\n It's heads, you go second (sorry!) \n";
-                messageToPrint = (result == CoinSide.error) ? "\n There was an error with the Coin Flip \n" : messageToPrint; // if result == CoinSide.error, an error will print. Otherwise, continue as usual.
+                messageToPrint = (result == CoinSide.tails) ? "\n    It's tails, you go second :(" : "\n    It's heads, you go second (sorry!)";
+                messageToPrint = (result == CoinSide.error) ? "\n    There was an error with the Coin Flip" : messageToPrint; // if result == CoinSide.error, an error will print. Otherwise, continue as usual.
             }
 
             Console.WriteLine($"\n {messageToPrint} \n");
+            Thread.Sleep(1300);
             Console.WriteLine("Press any key to begin the game!");
             Console.ReadKey();
         }
@@ -555,22 +533,26 @@ namespace AndrewTTO
 
         static void AssignPlayerNames(ref Player player1, ref Player player2)
         {
+            string prompt;
             if (player1.PlayerType == Player.Type.human && player1.name == "")
             {
-                Console.WriteLine("Please Input your name, Player 1"); 
-                player1.AssignName();
-                Console.WriteLine($"Welcome to the Game {player1.name}!");
+                prompt = ("Please Input your name, Player 1");
+                player1.AssignName(prompt);
+                Console.WriteLine($"\nWelcome to the Game {player1.name}!");
                 Thread.Sleep(1000);
             }
             if (player2.PlayerType == Player.Type.human && player2.name == "")
             {
-                Console.WriteLine("Please Input your name, Player 2");
-                player2.AssignName();
+                prompt = "Please Input your name, Player 2";
+                player2.AssignName(prompt);
             }
             else if (player2.PlayerType == Player.Type.AI)
             {
-                Console.WriteLine("\n \n ... Player 2 will be playing as an AI");
-                Thread.Sleep(1000);
+                if (player1.score == 0 && player2.score == 0)
+                {
+                    Console.WriteLine("\n \n... Player 2 will be playing as an AI");
+                    Thread.Sleep(1200);
+                }
             }
 
         }
@@ -596,11 +578,11 @@ namespace AndrewTTO
             }
         }
 
-        static int ParseInput()
+        static int ParseInput(string prompt)
         {
             try
             {
-                int input = Int32.Parse(Console.ReadLine());
+                int input = Int32.Parse(GetPlayerInput(prompt));
                 return input;
             }
 
@@ -631,7 +613,8 @@ namespace AndrewTTO
                 if (response == "yes" || response == "y")
                 {
                     Console.Clear();
-                    Console.Beep();
+                    Console.Beep(440, 200);
+                    Console.Beep(880, 400);
                     return true;
                 }
                 else if (response == "no" || response == "n")
@@ -653,9 +636,66 @@ namespace AndrewTTO
             return false;
         }
 
-        static void DisplayHelpKey(Gameboard board)
+        static void PrintScoreboard(Player player1, Player player2)
         {
-            board.PrintHelpKey();
+            string p1victory_g = Grammarize("victory", player1.score);
+            string p2victory_g = Grammarize("victory", player2.score);
+            
+
+            
+            Console.WriteLine("*********************************************************************** \n");
+
+            Console.WriteLine($"Player 1 ({player1.PlayerType}) has {player1.score} {p1victory_g}, and Player 2 ({player2.PlayerType}) has {player2.score} {p2victory_g}. \n");
+
+            Console.WriteLine("***********************************************************************");
+
+            
+        }
+
+        public static string GetPlayerInput(string prompt)
+
+        { 
+            Console.WriteLine(prompt);
+            string input = "";
+            do
+
+            {
+                input = Console.ReadLine();
+
+                if (input == "/help")
+
+                {
+                    Gameboard.PrintHelpKey();
+                    Thread.Sleep(500);
+                    Console.WriteLine("\nNow, " + prompt);
+                }
+
+                else
+
+                {
+                    return input;
+                }
+
+            } while (input == "" || input == "/help");
+
+            ThrowError(3, "Escaped GetPlayerInput Method Loop");
+            return input;
+        }
+
+        public static string Grammarize(string baseWord, int quantity)
+        {
+            if (baseWord[baseWord.Length - 1] == 'y' && quantity == 1)
+            {
+                return baseWord;
+            }
+            else if (baseWord[baseWord.Length -1] == 'y' && quantity != 1)
+            {
+                baseWord = baseWord.Substring(0, baseWord.Length - 1) + "ies";
+                return baseWord;
+            }
+
+            ThrowError(4, "Grammar Error");
+            return baseWord;
         }
     }
 }
