@@ -39,23 +39,24 @@ namespace AndrewTTO
 
             for(int row = 0; row < BOARD_LENGTH; row++)
             {
-                for(int col = 0; col < BOARD_WIDTH; col++)
+                result += " \n     |     |     \n";
+                for (int col = 0; col < BOARD_WIDTH; col++)
                 {
-                    result += (tile[col, row].ToString());
+                    result += $"  {tile[col, row].ToString()}  ";
                     
-                    if (col == BOARD_WIDTH-1)
+                    if (col != BOARD_WIDTH-1)
                     {
-                        result += "\n";
+                        result += "|";
                     }
                     else
                     {
-                        result += "|";
+                        result += "\n";
                     }
                 }
 
                 if (row != BOARD_LENGTH - 1)
                 {
-                    result += "_____________" + "\n";
+                    result += "_____|_____|_____";
                 }
 
             }
@@ -64,6 +65,52 @@ namespace AndrewTTO
 
             return result;
 
+        }
+
+        public string PrintHelpKey()
+        {
+            string result = "";
+
+            for (int row = 0; row < BOARD_LENGTH; row++)
+            {
+                result += " \n     |     |     \n";
+                for (int col = 0; col < BOARD_WIDTH; col++)
+                {
+                    result += $"  {tile[col, row].ID}  ";
+
+                    if (col != BOARD_WIDTH - 1)
+                    {
+                        result += "|";
+                    }
+                    else
+                    {
+                        result += "\n";
+                    }
+                }
+
+                if (row != BOARD_LENGTH - 1)
+                {
+                    result += "_____|_____|_____";
+                }
+
+            }
+
+            Console.WriteLine(result);
+
+            return result;
+
+        }
+
+        public void WipeBoard()
+        {
+            for (int row = 0; row < BOARD_LENGTH; row++)
+            {
+                for (int col = 0; col < BOARD_WIDTH; col++)
+                {
+                    tile[col, row].content = Symbol.empty;
+                }
+
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
+
 namespace AndrewTTO
 {
 
@@ -17,9 +18,16 @@ namespace AndrewTTO
         public string name { get; set; }
         public bool turnActive { get; set; }
 
+        public int score {get; set;}
+
+        public int lastPlay { get; set; }
+        public bool victoryStatus { get; set; }
+
 
         public Player()
-        {          
+        {
+            score = 0;
+            name = "";
         }
 
         public void AssignSymbol(Symbol assignedSymbol)
@@ -34,13 +42,27 @@ namespace AndrewTTO
 
         public void AssignName()
         {
-            Console.WriteLine("Please Input your name!");
             name = Console.ReadLine();
         }
 
         public void SetTurnActiveStatus(bool status)
         {
             turnActive = status;
+        }
+
+        public void SetLastPlay(int x_coord, int y_coord)
+        {
+            lastPlay = Program.GetTileID(x_coord, y_coord);
+        }
+
+        public void UpdatePlayerScore()
+        {
+            ++score;
+        }
+
+        public void UpdatePlayerVictoryStatus(bool result)
+        {
+            victoryStatus = result;
         }
     }
 }

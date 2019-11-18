@@ -23,19 +23,19 @@ namespace AndrewTTO
         {
             if (this.content == Symbol.empty)
            {
-                return "     ";
+                return " ";
             }
             if (this.content == Symbol.X)
             {
-                return "  X  ";
+                return "X";
 
             }
             if (this.content == Symbol.O)
             {
-                return "  O  ";
+                return "O";
             }
             else
-            { return "#####"; } // ideally I would have this throw an exception I think, but I'll need to address this later.
+            { return "#"; } // ideally I would have this throw an exception I think, but I'll need to address this later.
 
         }
     }
