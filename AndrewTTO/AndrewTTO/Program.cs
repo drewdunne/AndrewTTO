@@ -289,6 +289,21 @@ namespace AndrewTTO
                 else { return false; }
             }
 
+            else if (x_coord == 1 && y_coord == 1)
+            {
+                if (board.tile[x_coord - 1, y_coord - 1].content == activePlayer.PlayersSymbol && board.tile[x_coord + 1, y_coord + 1].content == activePlayer.PlayersSymbol)
+                {
+                    return true;
+                }
+
+                else if (board.tile[x_coord - 1, y_coord + 1].content == activePlayer.PlayersSymbol && board.tile[x_coord + 1, y_coord - 1].content == activePlayer.PlayersSymbol)
+                {
+                    return true;
+                }
+
+                else { return false; }
+            }
+
             else { return false; }
 
         }
